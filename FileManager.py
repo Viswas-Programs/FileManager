@@ -10,10 +10,11 @@ def FTRConfigSettings(path, data=None) -> tuple:
         with open(path, "w") as FTR_write_config: #FirstTimeRun_Write_config, full form.
             FTR_write_config.write(data)
     return config
-THEME_WINDOW_BG, THEME_FOREGROUND = FTRConfigSettings("theme_config.txt", f"White\nBlack")
+THEME_WINDOW_BG, THEME_FOREGROUND = FTRConfigSettings("theme_config.txt", f"Black\nWhite")
 filepath = None
-def lookUpFiles(path):
+def lookUpFiles(path, ):
     global filepath
+    print()
     addressBar.delete(0, tkinter.END)
     filepath = path
     addressBar.insert(tkinter.END, path)
@@ -49,6 +50,12 @@ def goBackFolder(path: str):
     addressBar.delete(0, tkinter.END)
     addressBar.insert(tkinter.END, path)
     lookUpFiles(path=path)
+def createFolder():
+    global addressBar, folderName
+    """ create a folder in the active directory"""
+    newFolderPath = os.path.join(addressBar.get(), folderName.get())
+    os.mkdir(newFolderPath)
+    lookUpFiles(newFolderPath)
 fileManagerWindow = tkinter.Tk()
 fileManagerWindow.configure(background=THEME_WINDOW_BG)
 fileManagerWindow.title("File Manager")
@@ -64,6 +71,11 @@ goBackButton = tkinter.Button(mainFrame, text="Go back!", background=THEME_WINDO
                             command=lambda: goBackFolder(path=addressBar.get()))
 goBackButton.grid(row=0, column=2, sticky="nw", padx=2)
 addressBar.grid(row=0, column=0, sticky="n")
+folderName = tkinter.Entry(mainFrame, background=THEME_WINDOW_BG, foreground=THEME_FOREGROUND, width=50)
+folderName.grid(row=1, column=0)
+newFolder = tkinter.Button(mainFrame, text="New Folder!", background=THEME_WINDOW_BG, foreground=THEME_FOREGROUND,
+                            command=createFolder)
+newFolder.grid(row=1, column=1)
 # driveSelection = ttk.Treeview(mainFrame, style="Treeview")
 # driveSelection.grid(row=0, column=0, sticky="w")
 # driveSelection['column'] = "Drives"
@@ -71,7 +83,7 @@ addressBar.grid(row=0, column=0, sticky="n")
 # driveSelection.column("Drives", anchor=tkinter.W, width=100)
 # driveSelection.heading("Drives", text="Drives", anchor=tkinter.CENTER)
 fileView = ttk.Treeview(mainFrame, style="Treeview")
-fileView.grid(row=1, column=0, sticky="w")
+fileView.grid(row=2, column=0, sticky="w")
 fileView['column'] = "Files"
 fileView.column("#0", anchor=tkinter.W, width=0, stretch=tkinter.NO)
 fileView.column("Files", anchor=tkinter.W, width=600)
